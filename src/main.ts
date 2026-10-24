@@ -142,6 +142,7 @@ async function startCamera() {
       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } },
       audio: false,
     });
+    if (!video.isConnected) frameWrap.prepend(video);
     video.srcObject = stream;
     await video.play();
     idleView.hidden = true;
@@ -183,7 +184,9 @@ async function captureFrame(): Promise<{ display: string; payload: string } | nu
 
 function showFrozen(displayUrl: string, payload: string) {
   currentFrame = payload;
-  video.hidden = true;
+  // the <video> element's layer blanks the <img> in WebKit compositing even when
+  // hidden — it must leave the DOM entirely while the still is shown
+  video.remove();
   frozen.src = displayUrl;
   frozen.hidden = false;
   stopStream();
@@ -360,6 +363,7 @@ newFrameBtn.addEventListener('click', () => {
   currentFrame = null;
   typeInput.value = '';
   if (stream) {
+    if (!video.isConnected) frameWrap.prepend(video);
     video.hidden = false;
     frozen.hidden = true;
     setPhase('live');
