@@ -3,7 +3,7 @@
 **Point your camera. Ask your question. Hear the answer.**
 Sight on demand, in the browser — no app, no account, no wait.
 
-**Live: https://glance-sepia.vercel.app** · **Devpost: https://devpost.com/software/glance-6c45pt** · **Demo video: https://www.youtube.com/watch?v=eOWzPtR2B2A**
+**Live: https://glance-sepia.vercel.app** · **Devpost: https://devpost.com/software/glance-6c45pt** · **Demo video: https://www.youtube.com/watch?v=MrRbW_vATmE**
 
 Glance is a sight assistant for blind and low-vision users that runs entirely in the browser
 you already have. Open the page on any phone, allow the camera, and ask out loud — *"What is this?",
