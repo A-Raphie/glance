@@ -3,7 +3,7 @@
 **Point your camera. Ask your question. Hear the answer.**
 Sight on demand, in the browser — no app, no account, no wait.
 
-**Live: https://glance-sepia.vercel.app**
+**Live: https://glance-sepia.vercel.app** · **Devpost: https://devpost.com/software/glance-6c45pt** · **Demo video: https://www.youtube.com/watch?v=eOWzPtR2B2A**
 
 Glance is a sight assistant for blind and low-vision users that runs entirely in the browser
 you already have. Open the page on any phone, allow the camera, and ask out loud — *"What is this?",
@@ -86,4 +86,4 @@ vercel dev             # local: http://localhost:3000
 ## Event
 
 Built for the **IEEE Hack for Humanity** hackathon — *"Beyond 2030: Build the World You Want to Live In"*,
-Track 2: AI for Accessibility & Disability Inclusion. Solo entry, October 2026.
+Track 2: AI for Accessibility & Disability Inclusion. Solo entry, October 2026. **Submitted** Oct 24, 2026.
