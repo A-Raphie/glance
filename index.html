@@ -52,6 +52,10 @@
         <div class="frame-wrap">
           <video id="camera" autoplay playsinline muted></video>
           <img id="frozen" alt="Frozen camera frame awaiting your question" hidden />
+          <span class="corner c1" aria-hidden="true"></span>
+          <span class="corner c2" aria-hidden="true"></span>
+          <span class="corner c3" aria-hidden="true"></span>
+          <span class="corner c4" aria-hidden="true"></span>
           <div id="frameStatus" class="frame-status" role="status"></div>
         </div>
 
@@ -99,6 +103,7 @@
       <!-- answer -->
       <section id="answerCard" class="answer-card" aria-labelledby="answerHeading" hidden>
         <h2 id="answerHeading" class="answer-heading">Glance says</h2>
+        <span class="qmark" aria-hidden="true">&ldquo;</span>
         <p id="answerText" class="answer-text" aria-live="assertive" role="status"></p>
         <div class="answer-meta">
           <span id="answerState"></span>

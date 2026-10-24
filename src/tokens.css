@@ -1,59 +1,74 @@
-/* Glance design tokens — calm dark, high contrast, warm single accent.
-   Accessibility product: AA+ contrast everywhere, type scales up via [data-font]. */
+/* Glance design tokens — the large-print edition.
+   Material culture of the audience: cream paper (large-print books avoid glare-white),
+   ink text, high-vis amber from cane tape and visibility aids.
+   Accessibility bar: AA+ everywhere, type scales up via [data-font]. */
 
 :root {
-  /* surfaces */
-  --bg: #14120f;            /* warm near-black */
-  --surface: #1e1b17;       /* card */
-  --surface-2: #282420;     /* raised card / input */
-  --line: #3a352f;          /* hairline borders */
+  /* surfaces — paper */
+  --bg: #f8f2e3;            /* aged cream */
+  --surface: #fffaf0;       /* slip paper */
+  --surface-2: #f0e8d4;     /* field */
+  --line: #d9cfb4;          /* hairline */
+  --line-strong: #1d1710;   /* ink rule */
 
-  /* text */
-  --text: #f5f1ea;          /* warm off-white, 13.8:1 on --bg */
-  --text-dim: #cdc6ba;      /* secondary, 9.2:1 on --bg */
-  --text-faint: #a59d90;    /* tertiary, 6.9:1 on --bg */
+  /* text — ink */
+  --text: #1d1710;          /* 14.9:1 on --bg */
+  --text-dim: #524734;      /* 8.1:1 on --bg */
+  --text-faint: #6d6450;    /* 5.7:1 on --bg */
 
-  /* accent — candle amber */
-  --accent: #f5b83d;        /* on --bg: 9.9:1 */
-  --accent-strong: #ffc95e;
-  --accent-ink: #1c1503;    /* text on accent: 12.9:1 */
+  /* accent — high-vis amber */
+  --accent: #b45309;        /* deep amber, 4.9:1 on --bg — small text safe */
+  --accent-fill: #f5b83d;   /* tape amber — fills only, with ink text */
+  --accent-ink: #1d1710;    /* text on amber fills: 10.2:1 */
 
   /* status */
-  --ok: #7dd487;
-  --warn: #f5b83d;
-  --error: #ff8f8f;
+  --ok: #2f6b3a;
+  --warn: #b45309;
+  --error: #a02c20;
 
-  /* type scale — big by default; scales via data-font on <html> */
+  /* type */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-ui: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
   --fs-base: 18px;
-  --fs-answer: 26px;
-  --fs-hero: clamp(34px, 6vw, 56px);
+  --fs-answer: 29px;
+  --fs-hero: clamp(46px, 8.5vw, 86px);
   --lh: 1.45;
 }
-[data-font="lg"] { --fs-base: 21px; --fs-answer: 30px; }
-[data-font="xl"] { --fs-base: 24px; --fs-answer: 34px; }
+[data-font="lg"] { --fs-base: 21px; --fs-answer: 34px; }
+[data-font="xl"] { --fs-base: 24px; --fs-answer: 40px; }
 
 :root {
   /* spacing */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
 
-  /* shape */
-  --r-sm: 8px; --r-md: 14px; --r-lg: 22px; --r-full: 999px;
+  /* shape — print-shop corners, not pills */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
 
   /* motion */
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --t-fast: 140ms;
   --t-med: 260ms;
+
+  /* the print-shop shadow: hard offset, single light source */
+  --shadow-hard: 4px 4px 0 var(--line-strong);
+  --shadow-hard-sm: 3px 3px 0 var(--line-strong);
 }
 
+/* maximum-contrast mode: pure black field, white ink, signal yellow */
 [data-contrast="high"] {
   --bg: #000000;
-  --surface: #0d0c0a;
-  --surface-2: #161411;
-  --line: #565048;
+  --surface: #0c0a06;
+  --surface-2: #171309;
+  --line: #6b6350;
+  --line-strong: #ffffff;
   --text: #ffffff;
-  --text-dim: #ece7dd;
-  --text-faint: #c4bcb0;
+  --text-dim: #ece5d2;
+  --text-faint: #c9c0a6;
   --accent: #ffd166;
+  --accent-fill: #ffd166;
+  --accent-ink: #000000;
+  --shadow-hard: 4px 4px 0 #ffffff;
+  --shadow-hard-sm: 3px 3px 0 #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {
