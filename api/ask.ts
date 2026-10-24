@@ -23,11 +23,15 @@ export default async function handler(req: any, res: any) {
 
   try {
     const { image, question, mode } = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
-    if (!image || typeof image !== 'string' || !image.startsWith('data:image/')) {
+    const isDataImage = typeof image === 'string' && image.startsWith('data:image/');
+    const isSampleUrl = typeof image === 'string'
+      && image.startsWith('https://glance-sepia.vercel.app/samples/')
+      && image.endsWith('.jpg');
+    if (!isDataImage && !isSampleUrl) {
       res.status(400).json({ error: 'missing image' });
       return;
     }
-    if (image.length > 4_500_000) {
+    if (isDataImage && image.length > 4_500_000) {
       res.status(413).json({ error: 'image too large' });
       return;
     }

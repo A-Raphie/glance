@@ -165,7 +165,8 @@ function stopStream() {
 }
 
 // freeze the current video frame into a still
-function captureFrame(): string | null {
+// display uses a blob URL (a real image decode paints everywhere); the API payload keeps the data URL
+async function captureFrame(): Promise<{ display: string; payload: string } | null> {
   if (!video.videoWidth) return null;
   const maxEdge = 1280;
   const scale = Math.min(1, maxEdge / Math.max(video.videoWidth, video.videoHeight));
@@ -175,13 +176,15 @@ function captureFrame(): string | null {
   const ctx = c.getContext('2d');
   if (!ctx) return null;
   ctx.drawImage(video, 0, 0, c.width, c.height);
-  return c.toDataURL('image/jpeg', 0.82);
+  const payload = c.toDataURL('image/jpeg', 0.82);
+  const blob = await (await fetch(payload)).blob();
+  return { display: URL.createObjectURL(blob), payload };
 }
 
-function showFrozen(dataUrl: string) {
-  currentFrame = dataUrl;
+function showFrozen(displayUrl: string, payload: string) {
+  currentFrame = payload;
   video.hidden = true;
-  frozen.src = dataUrl;
+  frozen.src = displayUrl;
   frozen.hidden = false;
   stopStream();
 }
@@ -211,9 +214,9 @@ async function ask(question: string | null, forcedMode?: Mode) {
   const useMode = forcedMode ?? mode;
   if (!currentFrame) {
     // no frame yet — capture from live video or bail
-    const frame = captureFrame();
+    const frame = await captureFrame();
     if (!frame) { return; }
-    showFrozen(frame);
+    showFrozen(frame.display, frame.payload);
   }
   const q = (question ?? '').trim();
   if (useMode === 'ask' && !q) {
@@ -287,12 +290,12 @@ function renderAnswer(question: string, answer: string, useMode: Mode, isError =
 // ---------- wire up controls ----------
 startCameraBtn.addEventListener('click', startCamera);
 
-shutter.addEventListener('click', () => {
+shutter.addEventListener('click', async () => {
   if (phase === 'listening') return;
   if (video.hidden || !video.videoWidth) { promptForQuestion(); return; }
-  const frame = captureFrame();
+  const frame = await captureFrame();
   if (!frame) return;
-  showFrozen(frame);
+  showFrozen(frame.display, frame.payload);
   if (mode === 'read') {
     ask(null, 'read');
   } else {
@@ -312,13 +315,13 @@ function setMode(m: Mode) {
   if (phase === 'live') setPhase('live');
 }
 
-typeForm.addEventListener('submit', (e) => {
+typeForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const q = typeInput.value.trim();
   if (!q) return;
   if (!currentFrame) {
-    const frame = captureFrame();
-    if (frame) { showFrozen(frame); }
+    const frame = await captureFrame();
+    if (frame) { showFrozen(frame.display, frame.payload); }
     else { startCameraThenAsk(q); return; }
   }
   ask(q);
@@ -327,21 +330,21 @@ typeForm.addEventListener('submit', (e) => {
 async function startCameraThenAsk(q: string) {
   await startCamera();
   // wait briefly for first frame, then run
-  setTimeout(() => {
-    const frame = captureFrame();
-    if (frame) { showFrozen(frame); ask(q); }
+  setTimeout(async () => {
+    const frame = await captureFrame();
+    if (frame) { showFrozen(frame.display, frame.payload); ask(q); }
   }, 900);
 }
 
 document.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) =>
-  chip.addEventListener('click', () => {
+  chip.addEventListener('click', async () => {
     const q = chip.dataset.q ?? '';
     typeInput.value = q;
     if (!currentFrame) {
       if (video.hidden || !video.videoWidth) { startCameraThenAsk(q); return; }
-      const frame = captureFrame();
+      const frame = await captureFrame();
       if (!frame) return;
-      showFrozen(frame);
+      showFrozen(frame.display, frame.payload);
     }
     ask(q);
   })
@@ -377,7 +380,7 @@ uploadInput.addEventListener('change', () => {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    showFrozen(String(reader.result));
+    showFrozen(URL.createObjectURL(file), String(reader.result));
     idleView.hidden = true;
     liveView.hidden = false;
     if (mode === 'read') ask(null, 'read');
@@ -395,19 +398,9 @@ document.querySelectorAll<HTMLButtonElement>('.sample').forEach((b) =>
     if (!src) return;
     idleView.hidden = true;
     liveView.hidden = false;
-    frameStatus.textContent = 'Loading sample…';
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      const scale = Math.min(1, 1280 / Math.max(img.width, img.height));
-      c.width = Math.round(img.width * scale);
-      c.height = Math.round(img.height * scale);
-      c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
-      showFrozen(c.toDataURL('image/jpeg', 0.85));
-      ask('Describe this for someone who cannot see it, including any text.');
-    };
-    img.onerror = () => { frameStatus.textContent = 'Could not load the sample.'; };
-    img.src = src;
+    // display the real sample URL (paints everywhere); the API reads it from the public origin
+    showFrozen(src, 'https://glance-sepia.vercel.app' + src);
+    ask('Describe this for someone who cannot see it, including any text.');
   })
 );
 
