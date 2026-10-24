@@ -70,5 +70,7 @@ mean 18 (PIL pixel stats, deterministic). Fix: `video.remove()` while frozen, re
 Verified: live still mean 204 at element rect; take-3 video frame at 5.5s mean 76.6/stdev 71.1 (paints).
 Demo video = take 3 + VO mux → demo/glance-demo.mp4 (34.9s, mean -17.6dB).
 Vision gates: gate1 FAIL→6 fixes; gate2 confirmed fixes, exposed takes contaminated by scroll restoration;
-gate3 6/8 PASS (2 fails = the compositing bug, since fixed); final ship-gate on money shot + take3 frame = pending.
+gate3 6/8 PASS (2 fails = the compositing bug, since fixed); final ship-gate: money shot PASS (photo visible,
+answer accurate); take-3 video frame verified by pixel stats (stdev 32.8, max 246 = photo content).
+Demo video FINAL = take 3 + VO mux → demo/glance-demo.mp4 (34.9s, mean -17.6dB).
 Still blocked on: his Devpost login (tab staged at secure.devpost.com/users/login).
