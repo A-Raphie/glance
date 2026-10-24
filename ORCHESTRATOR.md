@@ -62,3 +62,13 @@ Mode: hackathon, solo, portfolio-first. Timebox overrides ceremony; skips are lo
 
 Known capture quirks (logged): IAB fullPage screenshot stitches 3× (artifact, DOM verified single-copy);
 reload() restores scroll — fresh query params for clean states.
+
+## Post-gate root cause (Oct 24 03:10 WAT)
+The "black frozen frame" was NOT a capture artifact: a sibling `<video>` element blanks `<img>` painting
+in WKWebView compositing even when hidden and stream-less. Bisect: img-only page mean 206 vs video+img page
+mean 18 (PIL pixel stats, deterministic). Fix: `video.remove()` while frozen, re-`prepend` on live resume.
+Verified: live still mean 204 at element rect; take-3 video frame at 5.5s mean 76.6/stdev 71.1 (paints).
+Demo video = take 3 + VO mux → demo/glance-demo.mp4 (34.9s, mean -17.6dB).
+Vision gates: gate1 FAIL→6 fixes; gate2 confirmed fixes, exposed takes contaminated by scroll restoration;
+gate3 6/8 PASS (2 fails = the compositing bug, since fixed); final ship-gate on money shot + take3 frame = pending.
+Still blocked on: his Devpost login (tab staged at secure.devpost.com/users/login).
