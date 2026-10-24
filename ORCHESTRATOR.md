@@ -44,3 +44,21 @@ Mode: hackathon, solo, portfolio-first. Timebox overrides ceremony; skips are lo
 - [x] Exit sweep stage 2 (all ⏳/⏸ revisited — hackathon-design deferred with trigger)
 - [x] ◆ skills so far: none run
 - [ ] Stage 4 entry sweep queued after deploy
+
+## Stage 4-6 update (Oct 24 02:50 WAT)
+| Skill | Stage | State | Note |
+|---|---|---|---|
+| humaniser | 4/6 | ✅ | landing + submission copy plain-voice |
+| terminal-preflight | 4 | ✅ | 3 live amicus ffmpeg audio procs found — NOT stale (amicus running), left alive; IAB recorder doesn't use avfoundation |
+| browser-testing-with-devtools | 4 | ✅ | judge-path e2e ×3 (curl + IAB sample flow) |
+| mock-hunter | 4/6 | ✅ | only mock = sample photos, disclosed in UI + README honesty ❌ row; answers are real API |
+| ship-rehearsal / pre-ship-gate | 5 | ✅ | deploy → e2e → live revision match (fresh-URL loads defeat scroll restoration) |
+| claims-verify | 6 | ✅ | claims exercised vs live build: 2.7–3.2s measured, 8.76kB, zero deps, zero trackers (grep hit = own privacy copy) |
+| demo-script → demo-video | 6 | ✅ | 34.9s scripted take on fixed build, VO muxed (Samantha, mean -17.6dB) → demo/glance-demo.mp4 |
+| demo-final-gate | 6 | ✅ | probe h264+aac 34.9s 1.28MB, audio nonzero, frames vision-QC'd |
+| frontend-lighthouse | 4 | 🔍 | timebox skip: 8.8kB native-API page |
+| ui-craft / ux-laws | 3-4 | ✅ | 2 vision-gate rounds → 6 real fixes (stale status, AA contrast, history clip, dup CTA, dead column, placeholder) |
+| vision-flash gates | 4/6 | ✅ | gate1 FAIL→fixed; gate2 confirmed fixes live, exposed scroll-restoration contamination in takes; gate3 final = pending |
+
+Known capture quirks (logged): IAB fullPage screenshot stitches 3× (artifact, DOM verified single-copy);
+reload() restores scroll — fresh query params for clean states.
