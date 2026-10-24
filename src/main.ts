@@ -272,11 +272,15 @@ function renderAnswer(question: string, answer: string, useMode: Mode, isError =
     const qp = document.createElement('p'); qp.className = 'q';
     qp.textContent = useMode === 'read' && !question ? 'Read mode' : `“${question}”`;
     const ap = document.createElement('p'); ap.className = 'a';
-    ap.textContent = answer;
+    ap.textContent = answer.length > 160 ? answer.slice(0, 157).trimEnd() + '…' : answer;
     li.append(qp, ap);
     historyList.prepend(li);
     while (historyList.children.length > 5) historyList.lastChild?.remove();
   }
+  setPhase('frozen');
+  frameStatus.textContent = '';
+  shutterHint.textContent = 'Ask something else';
+  shutterSub.textContent = 'tap the round button for a new look';
   answerCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 

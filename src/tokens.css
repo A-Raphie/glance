@@ -10,8 +10,8 @@
 
   /* text */
   --text: #f5f1ea;          /* warm off-white, 13.8:1 on --bg */
-  --text-dim: #c9c2b6;      /* secondary, 8.6:1 on --bg */
-  --text-faint: #948c7f;    /* tertiary, 5.5:1 on --bg */
+  --text-dim: #cdc6ba;      /* secondary, 9.2:1 on --bg */
+  --text-faint: #a59d90;    /* tertiary, 6.9:1 on --bg */
 
   /* accent — candle amber */
   --accent: #f5b83d;        /* on --bg: 9.9:1 */
