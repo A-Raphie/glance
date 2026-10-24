@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" data-font="base">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Glance — sight on demand, in your browser</title>
+  <meta name="description" content="Point your phone at anything, ask your question, hear the answer. A zero-install sight assistant for blind and low-vision users. No app, no account." />
+  <meta name="theme-color" content="#14120f" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Glance — sight on demand, in your browser" />
+  <meta property="og:description" content="Ask your camera a question. Hear the answer. No app, no account, no wait." />
+  <meta property="og:type" content="website" />
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="topbar">
+    <span class="wordmark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--accent)" stroke-width="2.4"/><circle cx="12" cy="12" r="3.4" fill="var(--accent)"/></svg></span>
+    <span class="wordmark-text">Glance</span>
+    <button id="openSettings" class="btn-ghost" type="button" aria-haspopup="dialog">Settings</button>
+  </header>
+
+  <main id="main">
+    <!-- ============ THE STAGE: hero → camera ============ -->
+    <section id="stage" aria-labelledby="stageHeading">
+      <!-- idle state -->
+      <div id="idleView">
+        <p class="kicker">IEEE Hack for Humanity · AI for Accessibility</p>
+        <h1 id="stageHeading">Point. Ask.<br /><em>Hear what's there.</em></h1>
+        <p class="hero-sub">
+          A sight assistant that lives in your browser. Open this page on any phone,
+          allow the camera, and ask out loud — <strong>“What is this?” “Read this label.”
+          “What's the expiry date?”</strong> Glance answers in speech and text.
+        </p>
+        <p class="hero-diff">No app to install. No account. No waiting for a volunteer.</p>
+        <div class="cta-row">
+          <button id="startCamera" class="btn-primary" type="button">Open the camera</button>
+          <button id="trySample" class="btn-secondary" type="button">Try a sample photo</button>
+        </div>
+        <p class="privacy-line">Your camera frames are used only to answer your question — never stored, no account needed.</p>
+      </div>
+
+      <!-- camera / frozen state -->
+      <div id="liveView" hidden>
+        <div class="frame-wrap">
+          <video id="camera" autoplay playsinline muted></video>
+          <img id="frozen" alt="Frozen camera frame awaiting your question" hidden />
+          <div id="frameStatus" class="frame-status" role="status"></div>
+        </div>
+
+        <div class="mode-row" role="radiogroup" aria-label="Answer mode">
+          <button id="modeAsk" class="mode-btn is-active" role="radio" aria-checked="true" type="button">Ask</button>
+          <button id="modeRead" class="mode-btn" role="radio" aria-checked="false" type="button">Read text out loud</button>
+        </div>
+
+        <!-- question capture -->
+        <div id="questionBox">
+          <div id="micRow">
+            <button id="shutter" class="shutter" type="button" aria-label="Take a picture and ask your question"></button>
+            <div class="shutter-help">
+              <strong id="shutterHint">Tap to look</strong>
+              <span id="shutterSub">then ask your question by voice or keyboard</span>
+            </div>
+          </div>
+          <form id="typeForm" class="type-row">
+            <label class="visually-hidden" for="typeInput">Type your question</label>
+            <input id="typeInput" type="text" autocomplete="off" placeholder="…or type a question" maxlength="300" />
+            <button class="btn-secondary" type="submit">Ask</button>
+          </form>
+          <div id="listeningNote" class="listening" role="status" hidden>
+            Listening… <button id="describeInstead" class="btn-ghost" type="button">just describe it</button>
+          </div>
+        </div>
+
+        <!-- presets -->
+        <div class="chips" aria-label="Common questions">
+          <button class="chip" type="button" data-q="What is in front of me?">What's in front of me?</button>
+          <button class="chip" type="button" data-q="Read all the text you can see.">Read this</button>
+          <button class="chip" type="button" data-q="What colors do you see?">Colors</button>
+          <button class="chip" type="button" data-q="Is there any date or expiry visible? What does it say?">Expiry date</button>
+          <button class="chip" type="button" data-q="Is there anything here that could be dangerous to touch or trip on?">Anything hazardous?</button>
+        </div>
+
+        <div class="alt-row">
+          <button id="uploadBtn" class="btn-ghost" type="button">Use a photo instead</button>
+          <input id="uploadInput" type="file" accept="image/*" capture="environment" hidden />
+          <span class="alt-sep" aria-hidden="true">·</span>
+          <button id="stopCamera" class="btn-ghost" type="button">Close camera</button>
+        </div>
+      </div>
+
+      <!-- answer -->
+      <section id="answerCard" class="answer-card" aria-labelledby="answerHeading" hidden>
+        <h2 id="answerHeading" class="answer-heading">Glance says</h2>
+        <p id="answerText" class="answer-text" aria-live="assertive" role="status"></p>
+        <div class="answer-meta">
+          <span id="answerState"></span>
+          <button id="repeatBtn" class="btn-ghost" type="button">Read it again</button>
+          <button id="newFrameBtn" class="btn-primary btn-small" type="button">Ask something else</button>
+        </div>
+      </section>
+
+      <!-- history (kept on-device only) -->
+      <section id="history" aria-labelledby="historyHeading" hidden>
+        <h2 id="historyHeading">Earlier this session</h2>
+        <ul id="historyList"></ul>
+      </section>
+    </section>
+
+    <!-- ============ LANDING ============ -->
+    <section class="prose-section" aria-labelledby="howHeading">
+      <h2 id="howHeading">How it works</h2>
+      <ol class="steps">
+        <li><strong>Open this page</strong> in any browser — phone or desktop. Nothing to install.</li>
+        <li><strong>Allow the camera</strong>, or pick a photo from your library.</li>
+        <li><strong>Ask out loud or by typing.</strong> Glance looks, answers in speech, and shows every word as text.</li>
+      </ol>
+    </section>
+
+    <section class="prose-section" aria-labelledby="whoHeading">
+      <h2 id="whoHeading">Who it's for</h2>
+      <p>
+        Blind and low-vision people who want an answer <em>now</em> — the small print on a medicine box,
+        what's on the shelf, whether that date on the package has passed. Anyone whose hands and eyes are busy.
+        Anyone for whom reading is hard in the moment: poor light, glare, unfamiliar language on a label.
+      </p>
+      <p>
+        It is built to accessibility standards, because an accessibility tool that isn't accessible is useless:
+        spoken-first answers, every word also written on screen, large controls, full keyboard support,
+        a high-contrast mode, and text that scales to your eyes — not ours.
+      </p>
+    </section>
+
+    <section class="prose-section" aria-labelledby="trustHeading">
+      <h2 id="trustHeading">Privacy and honesty</h2>
+      <p><strong>What happens to your pictures:</strong> a frame is sent over HTTPS only to answer your current
+        question, and then it's gone. Glance keeps no images, questions, or answers on any server. No account,
+        no analytics, no cookies. Your session history lives only on your device and disappears when you close the tab.
+      </p>
+      <p><strong>What Glance can get wrong:</strong> it reads what the camera sees, and cameras see badly sometimes —
+        blur, glare, bad light, partial views. Glance is instructed to quote text exactly in Read mode and to say
+        “I can't tell” rather than guess. For anything critical — medication, money, allergens — use Read mode and
+        check the quoted text yourself, or ask a person.
+      </p>
+      <p><strong>Known limits:</strong> it needs a network connection; very small text needs you to move closer;
+        it will not identify people or guess who someone is.</p>
+    </section>
+
+    <section class="prose-section" aria-labelledby="techHeading">
+      <h2 id="techHeading">How it's built</h2>
+      <p>
+        One static page and one small serverless function. Your browser handles the camera, voice capture,
+        and spoken answers natively — nothing on your device is recorded or uploaded. Questions are answered by a
+        frontier vision model through OpenRouter; the frame and your question travel together, and neither is kept.
+        No tracking anywhere in the stack.
+      </p>
+    </section>
+
+    <section class="prose-section" aria-labelledby="faqHeading">
+      <h2 id="faqHeading">Questions people ask</h2>
+      <dl class="faq">
+        <dt>Does it work on iPhone?</dt>
+        <dd>Yes — Safari and Chrome on iOS, Chrome on Android, and every desktop browser. If the camera is unavailable, use “Use a photo instead”.</dd>
+        <dt>Is this like Be My Eyes?</dt>
+        <dd>Be My Eyes and Seeing AI are apps you install; Glance runs in the browser you already have and answers instantly, on demand — no volunteer queue, no download.</dd>
+        <dt>Which languages?</dt>
+        <dd>English today. Ask in another language and it answers in that language.</dd>
+        <dt>What does it cost?</dt>
+        <dd>Nothing to you. Each answer costs a fraction of a cent of model usage, covered by the project.</dd>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Glance — built for the IEEE Hack for Humanity hackathon, “Beyond 2030”.
+      Solo entry, Track 2: AI for Accessibility &amp; Disability Inclusion.
+      <a href="https://github.com/A-Raphie/glance" target="_blank" rel="noopener">Source on GitHub</a>.
+    </p>
+  </footer>
+
+  <!-- settings dialog -->
+  <dialog id="settings" aria-labelledby="settingsHeading">
+    <h2 id="settingsHeading">Settings</h2>
+    <div class="setting-row">
+      <span id="fontLabel">Text size</span>
+      <div role="radiogroup" aria-labelledby="fontLabel" class="seg-row">
+        <button class="seg" data-font-val="base" type="button" aria-pressed="true">A</button>
+        <button class="seg" data-font-val="lg" type="button" aria-pressed="false">A+</button>
+        <button class="seg" data-font-val="xl" type="button" aria-pressed="false">A++</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label for="rateRange">Speech speed</label>
+      <input id="rateRange" type="range" min="0.7" max="1.5" step="0.05" value="1" />
+      <output id="rateOut" for="rateRange">1.0×</output>
+    </div>
+    <div class="setting-row">
+      <span id="contrastLabel">High contrast</span>
+      <button id="contrastToggle" class="seg" aria-pressed="false" aria-labelledby="contrastLabel" type="button">Off</button>
+    </div>
+    <div class="setting-actions">
+      <button id="closeSettings" class="btn-primary btn-small" type="button">Done</button>
+    </div>
+  </dialog>
+
+  <!-- sample chooser -->
+  <dialog id="sampleChooser" aria-labelledby="sampleHeading">
+    <h2 id="sampleHeading">Try Glance on a sample photo</h2>
+    <p class="dialog-sub">No camera needed — these are photos like the ones you'd take.</p>
+    <div class="sample-row">
+      <button class="sample" data-sample="/samples/pantry.jpg" type="button">
+        <img src="/samples/pantry.jpg" alt="Sample: a jar label" />
+        <span>A jar in the pantry</span>
+      </button>
+      <button class="sample" data-sample="/samples/medicine.jpg" type="button">
+        <img src="/samples/medicine.jpg" alt="Sample: a medicine box" />
+        <span>A medicine box</span>
+      </button>
+    </div>
+    <div class="setting-actions">
+      <button id="closeSample" class="btn-ghost" type="button">Cancel</button>
+    </div>
+  </dialog>
+</body>
+</html>

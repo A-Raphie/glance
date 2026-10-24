@@ -1,0 +1,61 @@
+/* Glance design tokens — calm dark, high contrast, warm single accent.
+   Accessibility product: AA+ contrast everywhere, type scales up via [data-font]. */
+
+:root {
+  /* surfaces */
+  --bg: #14120f;            /* warm near-black */
+  --surface: #1e1b17;       /* card */
+  --surface-2: #282420;     /* raised card / input */
+  --line: #3a352f;          /* hairline borders */
+
+  /* text */
+  --text: #f5f1ea;          /* warm off-white, 13.8:1 on --bg */
+  --text-dim: #c9c2b6;      /* secondary, 8.6:1 on --bg */
+  --text-faint: #948c7f;    /* tertiary, 5.5:1 on --bg */
+
+  /* accent — candle amber */
+  --accent: #f5b83d;        /* on --bg: 9.9:1 */
+  --accent-strong: #ffc95e;
+  --accent-ink: #1c1503;    /* text on accent: 12.9:1 */
+
+  /* status */
+  --ok: #7dd487;
+  --warn: #f5b83d;
+  --error: #ff8f8f;
+
+  /* type scale — big by default; scales via data-font on <html> */
+  --fs-base: 18px;
+  --fs-answer: 26px;
+  --fs-hero: clamp(34px, 6vw, 56px);
+  --lh: 1.45;
+}
+[data-font="lg"] { --fs-base: 21px; --fs-answer: 30px; }
+[data-font="xl"] { --fs-base: 24px; --fs-answer: 34px; }
+
+:root {
+  /* spacing */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
+
+  /* shape */
+  --r-sm: 8px; --r-md: 14px; --r-lg: 22px; --r-full: 999px;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --t-fast: 140ms;
+  --t-med: 260ms;
+}
+
+[data-contrast="high"] {
+  --bg: #000000;
+  --surface: #0d0c0a;
+  --surface-2: #161411;
+  --line: #565048;
+  --text: #ffffff;
+  --text-dim: #ece7dd;
+  --text-faint: #c4bcb0;
+  --accent: #ffd166;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
